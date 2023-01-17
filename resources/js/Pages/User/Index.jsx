@@ -1,5 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { useState, useRef, createContext, useContext, Fragment } from 'react';
+import { useState, useRef, useEffect, createContext, useContext, Fragment } from 'react';
 import { Head } from '@inertiajs/inertia-react';
 import { FaPlus } from "react-icons/fa";
 import { Visibility, VisibilityOff, Add as AddIc } from '@mui/icons-material';
@@ -12,7 +12,7 @@ import moment from 'moment';
 import InputError from '@/Components/InputError';
 
 
-export default function Index({ auth, users }) {
+export default function Index({ auth, users, dataUrl }) {
     const [modalOpen, setModalOpen] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [showPasswordConfirmation, setShowPasswordConfirmation] = useState(false);
@@ -40,17 +40,6 @@ export default function Index({ auth, users }) {
         event.preventDefault();
     };
 
-    const modalStyle = {
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: 600,
-        bgcolor: 'background.paper',
-        borderRadius: 5,
-        boxShadow: 24,
-        p: 4,
-    };
     const handleModalOpen = () => setModalOpen(true);
     const handleModalClose = () => setModalOpen(false);
 
@@ -117,7 +106,44 @@ export default function Index({ auth, users }) {
         },
     ];
 
-    const rows = users.data;
+    // const rows = users.data;
+
+    const [tableData, setTableData] = useState([])
+    const [tablePage, setTablePage] = useState(0)
+    const [tablePageSize, setTablePageSize] = useState(10)
+    const [tableTotal, setTableTotal] = useState(0)
+    const [isTableLoading, setIsTableLoading] = useState(false)
+
+    const handleTablePageChange = (newPage) => {
+        setIsTableLoading(true)
+        setTablePage(newPage)
+        setTable(newPage+1)
+        
+    }
+
+    const handleTablePageSizeChange = (newPageSize) => {
+        setIsTableLoading(true)
+        setTablePageSize(newPageSize)
+        console.log(newPageSize, tablePage);
+        setTable(tablePage, newPageSize)
+        
+    }
+
+    function setTable(page = 0, pageSize = 10) {
+        fetch(dataUrl + `?page=${page}&page_size=${pageSize}`)
+            .then((data) => data.json())
+            .then((data) => {
+                setTableData(data.data)
+                setTablePage(data.current_page - 1)
+                setTableTotal(data.total)
+                setIsTableLoading(false)
+            })
+    }
+
+    useEffect(() => {
+        setIsTableLoading(true)
+        setTable()
+    }, [])
 
     const createUser = (e) => {
         e.preventDefault();
@@ -126,6 +152,12 @@ export default function Index({ auth, users }) {
             preserveScroll: true,
             onSuccess: () => reset(),
             onError: () => {
+                if (errors.name) {
+                    nameInput.current.focus();
+                }
+                if (errors.email) {
+                    emailInput.current.focus();
+                }
                 if (errors.password) {
                     reset('password', 'password_confirmation');
                     passwordInput.current.focus();
@@ -160,13 +192,27 @@ export default function Index({ auth, users }) {
                         </header>
                         <section className='mt-2'>
                             <div style={{ width: '100%' }}>
-                                <DataGrid
+                                {/* <DataGrid
                                     autoHeight {...rows}
                                     rows={rows}
                                     columns={columns}
                                     pageSize={10}
                                     rowsPerPageOptions={[10]}
-                                    checkboxSelection
+                                /> */}
+                                <DataGrid
+                                    rows={tableData}
+                                    columns={columns}
+                                    autoHeight {...tableData}
+                                    rowCount={tableTotal}
+                                    rowsPerPageOptions={[10, 20, 50, 100]}
+                                    pagination
+                                    page={tablePage}
+                                    pageSize={tablePageSize}
+                                    paginationMode="server"
+                                    // initialState={initialState}
+                                    loading={isTableLoading}
+                                    onPageChange={(newPage) => handleTablePageChange(newPage)}
+                                    onPageSizeChange={(newPageSize) => handleTablePageSizeChange(newPageSize)}
                                 />
                             </div>
                         </section>
@@ -179,7 +225,17 @@ export default function Index({ auth, users }) {
                     aria-labelledby="modal-modal-title"
                     aria-describedby="modal-modal-description"
                 >
-                    <Box sx={modalStyle}>
+                    <Box sx={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        width: 600,
+                        bgcolor: 'background.paper',
+                        borderRadius: 5,
+                        boxShadow: 24,
+                        p: 4,
+                        }}>
                         <Box sx={{ borderBottom: 1, pb: 2 }}>
                             <Typography id="modal-modal-title" variant="h6" component="h2">
                                 Tambah User

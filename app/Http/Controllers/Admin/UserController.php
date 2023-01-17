@@ -42,8 +42,17 @@ class UserController extends Controller
         $users = User::select('id', 'name', 'email', 'email_verified_at', 'created_at', 'updated_at')->paginate(10);
 
         return Inertia::render('User/Index', [
-            'users' => $users
+            'users' => $users,
+            'dataUrl' => route('admin.users.data')
         ]);
+    }
+
+    public function data(Request $request)
+    {
+        $pageSize = $request->page_size ?? 10;
+        $users = User::select('id', 'name', 'email', 'email_verified_at', 'created_at', 'updated_at')->paginate($pageSize);
+
+        return response()->json($users);
     }
 
     public function store(UserStoreRequest $request): RedirectResponse
