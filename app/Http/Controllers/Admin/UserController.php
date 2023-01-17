@@ -50,15 +50,21 @@ class UserController extends Controller
     public function data(Request $request)
     {
         $pageSize = $request->page_size ?? 10;
-        $users = User::select('id', 'name', 'email', 'email_verified_at', 'created_at', 'updated_at')->paginate($pageSize);
+        
+        $filter = [
+            'search' => $request->search
+        ];
+
+        $users = User::select('id', 'name', 'email', 'email_verified_at', 'created_at', 'updated_at')
+            ->filter($filter)
+            ->paginate($pageSize);
 
         return response()->json($users);
     }
 
     public function store(UserStoreRequest $request): RedirectResponse
     {
-        $user = User::create($request->validated());
-
+        User::create($request->validated());
 
         return Redirect::route('admin.users.index');
     }

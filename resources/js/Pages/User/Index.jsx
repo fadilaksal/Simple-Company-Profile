@@ -1,16 +1,31 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { useState, useRef, useEffect, createContext, useContext, Fragment } from 'react';
+import { useState, useRef, useEffect, createContext, useContext, Fragment, useCallback } from 'react';
 import { Head } from '@inertiajs/inertia-react';
 import { FaPlus } from "react-icons/fa";
-import { Visibility, VisibilityOff, Add as AddIc } from '@mui/icons-material';
+import { Visibility, VisibilityOff, Add as AddIc, Search as SearchIcon } from '@mui/icons-material';
 import { DataGrid } from '@mui/x-data-grid';
-import { Container, InputLabel, Button, Box, Modal, Typography, InputAdornment, IconButton, OutlinedInput, FormControl, Alert, AlertTitle } from '@mui/material';
+import { Container, InputLabel, Button, Box, Modal, Typography, InputAdornment, IconButton, OutlinedInput, FormControl, Alert, AlertTitle, Paper, InputBase, Grid, TextField, Input } from '@mui/material';
 import { useForm } from '@inertiajs/inertia-react';
 import { Transition } from '@headlessui/react';
 import Stack from '@mui/material/Stack';
 import moment from 'moment';
 import InputError from '@/Components/InputError';
-
+import { debounce } from 'lodash';
+    
+const SearchInput = ({searcValue, setSearcValue, onChangeSelectFn}) => {
+    return <OutlinedInput
+            onChange={onChangeSelectFn}
+            type={'text'}
+            placeholder={'Search'}
+            value={searcValue}
+            size='small'
+            startAdornment={
+                <InputAdornment position="start">
+                    <SearchIcon></SearchIcon>
+                </InputAdornment>
+            }
+            />
+}
 
 export default function Index({ auth, users, dataUrl }) {
     const [modalOpen, setModalOpen] = useState(false);
@@ -113,24 +128,32 @@ export default function Index({ auth, users, dataUrl }) {
     const [tablePageSize, setTablePageSize] = useState(10)
     const [tableTotal, setTableTotal] = useState(0)
     const [isTableLoading, setIsTableLoading] = useState(false)
+    const [searchValue, setSearchValue] = useState('')
+    const [isAbleSearch, setIsAbleSearch] = useState(true)
 
     const handleTablePageChange = (newPage) => {
-        setIsTableLoading(true)
         setTablePage(newPage)
         setTable(newPage+1)
-        
     }
 
     const handleTablePageSizeChange = (newPageSize) => {
-        setIsTableLoading(true)
         setTablePageSize(newPageSize)
-        console.log(newPageSize, tablePage);
         setTable(tablePage, newPageSize)
-        
     }
 
-    function setTable(page = 0, pageSize = 10) {
-        fetch(dataUrl + `?page=${page}&page_size=${pageSize}`)
+    // const handleSearchFn = debounce((value) => {
+    //     setIsAbleSearch(true)
+    // }, 300)
+
+    const onChangeSearch = (e) => {
+
+        setSearchValue(e.target.value)        
+        setTable(tablePage, tablePageSize, e.target.value)
+    }
+
+    function setTable(page = 0, pageSize = 10, search = '') {
+        setIsTableLoading(true)
+        fetch(dataUrl + `?page=${page}&page_size=${pageSize}&search=${search}`)
             .then((data) => data.json())
             .then((data) => {
                 setTableData(data.data)
@@ -141,7 +164,6 @@ export default function Index({ auth, users, dataUrl }) {
     }
 
     useEffect(() => {
-        setIsTableLoading(true)
         setTable()
     }, [])
 
@@ -181,24 +203,22 @@ export default function Index({ auth, users, dataUrl }) {
             <Container sx={{ py: 2 }}>
                 <Box className="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
                     <div className="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                        <header className='border-b-gray-300 border-b-2 pb-3'>
-                            <div className="flex flex-row">
-                                <h2 className="text-lg font-medium text-gray-900 flex-grow">Data Users</h2>
-
-                                <Button variant="outlined" className="ml-4 flex" type="button" onClick={handleModalOpen}>
-                                    <FaPlus className='mr-2'/> Tambah Data
-                                </Button>
-                            </div>
+                        <header >
+                            <Box>
+                                <Grid container spacing={2}>
+                                    <Grid item xs={6} md={8}>
+                                        <SearchInput searcValue={searchValue} onChangeSelectFn={onChangeSearch}></SearchInput>
+                                    </Grid>
+                                    <Grid item xs={6} md={4} className={'text-end'}>
+                                        <Button variant="outlined" size='large' className="ml-4 flex" type="button" onClick={handleModalOpen}>
+                                            <FaPlus className='mr-2'/> Tambah Data
+                                        </Button>
+                                    </Grid>
+                                </Grid>
+                            </Box>
                         </header>
                         <section className='mt-2'>
                             <div style={{ width: '100%' }}>
-                                {/* <DataGrid
-                                    autoHeight {...rows}
-                                    rows={rows}
-                                    columns={columns}
-                                    pageSize={10}
-                                    rowsPerPageOptions={[10]}
-                                /> */}
                                 <DataGrid
                                     rows={tableData}
                                     columns={columns}
@@ -224,7 +244,7 @@ export default function Index({ auth, users, dataUrl }) {
                     onClose={handleModalClose}
                     aria-labelledby="modal-modal-title"
                     aria-describedby="modal-modal-description"
-                >
+                    >
                     <Box sx={{
                         position: 'absolute',
                         top: '50%',
