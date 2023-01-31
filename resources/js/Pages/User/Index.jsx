@@ -9,12 +9,12 @@ import Stack from '@mui/material/Stack';
 import moment from 'moment';
 import UserModal from './Partials/UserModal';
     
-const SearchInput = ({searcValue, setSearcValue, onChangeSelectFn}) => {
+const SearchInput = ({searchValue, setSearchValue}) => {
     return <OutlinedInput
-            onChange={onChangeSelectFn}
+            onChange={(event) => setSearchValue(event.target.value)}
             type={'text'}
             placeholder={'Search'}
-            value={searcValue}
+            value={searchValue}
             size='small'
             startAdornment={
                 <InputAdornment position="start">
@@ -50,12 +50,15 @@ export default function Index({ auth, dataUrl }) {
         setTable(tablePage, newPageSize)
     }
 
-    const onChangeSearch = (e) => {
-        setSearchValue(e.target.value)        
-        setTable(tablePage, tablePageSize, e.target.value)
-    }
+    useEffect(() => {
+        const updateTable = setTimeout(() => {
+            setTable(tablePage, tablePageSize, searchValue)
+        }, 500)
 
-    function setTable(page = 0, pageSize = 10, search = '') {
+        return () => clearTimeout(updateTable)
+    }, [searchValue])
+
+    function setTable(page = tablePage, pageSize = tablePageSize, search = '') {
         setIsTableLoading(true)
         fetch(dataUrl + `?page=${page}&page_size=${pageSize}&search=${search}`)
             .then((data) => data.json())
@@ -177,7 +180,7 @@ export default function Index({ auth, dataUrl }) {
                             <Box>
                                 <Grid container spacing={2}>
                                     <Grid item xs={6} md={8}>
-                                        <SearchInput searcValue={searchValue} onChangeSelectFn={onChangeSearch}></SearchInput>
+                                        <SearchInput searchValue={searchValue} setSearchValue={setSearchValue}></SearchInput>
                                     </Grid>
                                     <Grid item xs={6} md={4} className={'text-end'}>
                                         <Button variant="outlined" size='large' className="ml-4 flex" type="button" onClick={handleModalOpen}>
@@ -199,7 +202,6 @@ export default function Index({ auth, dataUrl }) {
                                     page={tablePage}
                                     pageSize={tablePageSize}
                                     paginationMode="server"
-                                    // initialState={initialState}
                                     loading={isTableLoading}
                                     onPageChange={(newPage) => handleTablePageChange(newPage)}
                                     onPageSizeChange={(newPageSize) => handleTablePageSizeChange(newPageSize)}
