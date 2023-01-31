@@ -1,6 +1,6 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { useState, useRef, useEffect, createContext, useContext, Fragment } from 'react';
-import { Head } from '@inertiajs/inertia-react';
+import { Head, useForm } from '@inertiajs/inertia-react';
 import { FaPlus } from "react-icons/fa";
 import { Visibility, VisibilityOff, Add as AddIc, Search as SearchIcon } from '@mui/icons-material';
 import { DataGrid } from '@mui/x-data-grid';
@@ -8,6 +8,9 @@ import { Container, InputLabel, Button, Box, Modal, Typography, InputAdornment, 
 import Stack from '@mui/material/Stack';
 import moment from 'moment';
 import UserModal from './Partials/UserModal';
+import SecondaryButton from '@/Components/SecondaryButton';
+import DangerButton from '@/Components/DangerButton';
+import { Transition } from '@headlessui/react';
     
 const SearchInput = ({searchValue, setSearchValue}) => {
     return <OutlinedInput
@@ -32,13 +35,13 @@ export default function Index({ auth, dataUrl }) {
     const [isTableLoading, setIsTableLoading] = useState(false)
     const [searchValue, setSearchValue] = useState('')
     const [isModalOpen, setIsModalOpen] = useState(false);
+
     const [user, setUser] = useState({
         name: '',
         email: '',
         password: '',
         password_confirmation: '',
     });
-    // const [isAbleSearch, setIsAbleSearch] = useState(true)
 
     const handleTablePageChange = (newPage) => {
         setTablePage(newPage)
@@ -60,31 +63,6 @@ export default function Index({ auth, dataUrl }) {
                 setTableTotal(data.total)
                 setIsTableLoading(false)
             })
-    }
-
-    const openDialogDelete = (user) => {
-        console.log(user);
-    }
-
-    const openEditModal = (userEdited) => {
-        setUser(userEdited)
-        setIsModalOpen(true)
-    }
-
-    const openCreateModal = () => {
-        setUser({
-            name: '',
-            email: '',
-            password: '',
-            password_confirmation: '',
-        })
-        setIsModalOpen(true)
-    };
-
-    const handleModalClose = () => setIsModalOpen(false);
-
-    const handleResponseFn = () => {
-        setTable(tablePage+1)
     }
 
     const columns = [
@@ -165,6 +143,60 @@ export default function Index({ auth, dataUrl }) {
     useEffect(() => {
         setTable()
     }, [])
+
+
+    const openEditModal = (userEdited) => {
+        setUser(userEdited)
+        setIsModalOpen(true)
+    }
+
+    const openCreateModal = () => {
+        setUser({
+            name: '',
+            email: '',
+            password: '',
+            password_confirmation: '',
+        })
+        setIsModalOpen(true)
+    };
+
+    const handleModalClose = () => setIsModalOpen(false);
+
+    const handleResponseFn = () => setTable(tablePage+1)
+
+
+    const {
+        delete: destroy,
+        processing,
+        reset,
+        errors,
+        recentlySuccessful
+    } = useForm({});
+
+    const [openDeleteModal, setOpenDeleteModal] = useState(false);
+
+    const openDialogDelete = (user) => {
+        setOpenDeleteModal(true)
+        setUser(user)
+    }
+
+    const closeDeleteModal = () => {
+        setOpenDeleteModal(false);
+        reset();
+    };
+
+    const deleteUser = (e) => {
+        e.preventDefault();
+
+        destroy(route('admin.users.destroy', { id: user.id }), {
+            preserveScroll: true,
+            onSuccess: () => { 
+                closeDeleteModal()
+                setTable(tablePage+1)
+            },
+            onFinish: () => reset(),
+        });
+    };
     
     return (
         <AuthenticatedLayout
@@ -176,6 +208,16 @@ export default function Index({ auth, dataUrl }) {
             <Container sx={{ py: 2 }}>
                 <Box className="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
                     <div className="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
+                        <Transition
+                            show={recentlySuccessful}
+                            enterFrom="opacity-0"
+                            leaveTo="opacity-0"
+                            className="transition ease-in-out mb-4" >
+                                <Alert severity="success" sx={{width: '100%'}}>
+                                    <AlertTitle>Success</AlertTitle>
+                                    Berhasil menghapus data
+                                </Alert>
+                        </Transition>
                         <header >
                             <Box>
                                 <Grid container spacing={2}>
@@ -218,6 +260,44 @@ export default function Index({ auth, dataUrl }) {
                     handleResponseFn={handleResponseFn}
                     >
                 </UserModal>
+
+                <Modal 
+                    open={openDeleteModal}
+                    onClose={closeDeleteModal}
+                    aria-labelledby="modal-modal-title"
+                    aria-describedby="modal-modal-description">
+                    <Box sx={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        width: 600,
+                        bgcolor: 'background.paper',
+                        borderRadius: 5,
+                        boxShadow: 24,
+                        p: 1,
+                        }}>
+                        <Box sx={{ p:1, display: 'flex', flexWrap: 'wrap' }}>
+                            <form onSubmit={deleteUser} className="p-6">
+                                <h2 className="text-lg font-medium text-gray-900">
+                                    Are you sure you want to delete account?
+                                </h2>
+
+                                <p className="mt-1 text-sm text-gray-600">
+                                    Once user is deleted, all of its resources and data will be permanently deleted.
+                                </p>
+
+                                <div className="mt-6 flex justify-end">
+                                    <SecondaryButton onClick={closeDeleteModal}>Cancel</SecondaryButton>
+
+                                    <DangerButton className="ml-3" processing={processing}>
+                                        Delete Account
+                                    </DangerButton>
+                                </div>
+                            </form>
+                        </Box>
+                    </Box>
+                </Modal>
             </Container>
         </AuthenticatedLayout>
     );

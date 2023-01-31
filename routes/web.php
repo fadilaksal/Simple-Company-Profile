@@ -41,6 +41,7 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/users/data', 'data')->name('users.data');
         Route::post('/users', 'store')->name('users.store');
         Route::put('/users/{id}', 'update')->name('users.update');
+        Route::delete('/users/{id}', 'destroy')->name('users.destroy');
     });
 });
 
