@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Redirect;
 use Inertia\Response;
 
 use App\Models\User;
+use Hash;
 
 class UserController extends Controller
 {
@@ -65,6 +66,13 @@ class UserController extends Controller
     public function store(UserStoreRequest $request): RedirectResponse
     {
         User::create($request->validated());
+
+        return Redirect::route('admin.users.index');
+    }
+
+    public function update(UserStoreRequest $request, $id)
+    {
+        $user = User::findOrFail($id)->update($request->validated());
 
         return Redirect::route('admin.users.index');
     }

@@ -1,16 +1,13 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { useState, useRef, useEffect, createContext, useContext, Fragment, useCallback } from 'react';
+import { useState, useRef, useEffect, createContext, useContext, Fragment } from 'react';
 import { Head } from '@inertiajs/inertia-react';
 import { FaPlus } from "react-icons/fa";
 import { Visibility, VisibilityOff, Add as AddIc, Search as SearchIcon } from '@mui/icons-material';
 import { DataGrid } from '@mui/x-data-grid';
-import { Container, InputLabel, Button, Box, Modal, Typography, InputAdornment, IconButton, OutlinedInput, FormControl, Alert, AlertTitle, Paper, InputBase, Grid, TextField, Input } from '@mui/material';
-import { useForm } from '@inertiajs/inertia-react';
-import { Transition } from '@headlessui/react';
+import { Container, InputLabel, Button, Box, Modal, Typography, InputAdornment, IconButton, OutlinedInput, FormControl, Alert, AlertTitle, Grid } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import moment from 'moment';
-import InputError from '@/Components/InputError';
-import { debounce } from 'lodash';
+import UserModal from './Partials/UserModal';
     
 const SearchInput = ({searcValue, setSearcValue, onChangeSelectFn}) => {
     return <OutlinedInput
@@ -27,36 +24,73 @@ const SearchInput = ({searcValue, setSearcValue, onChangeSelectFn}) => {
             />
 }
 
-export default function Index({ auth, users, dataUrl }) {
-    const [modalOpen, setModalOpen] = useState(false);
-    const [showPassword, setShowPassword] = useState(false);
-    const [showPasswordConfirmation, setShowPasswordConfirmation] = useState(false);
-
-    const { data, setData, post, errors, reset, processing, recentlySuccessful } = useForm({
+export default function Index({ auth, dataUrl }) {
+    const [tableData, setTableData] = useState([])
+    const [tablePage, setTablePage] = useState(0)
+    const [tablePageSize, setTablePageSize] = useState(10)
+    const [tableTotal, setTableTotal] = useState(0)
+    const [isTableLoading, setIsTableLoading] = useState(false)
+    const [searchValue, setSearchValue] = useState('')
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [user, setUser] = useState({
         name: '',
         email: '',
         password: '',
         password_confirmation: '',
     });
+    // const [isAbleSearch, setIsAbleSearch] = useState(true)
 
-    const nameInput = useRef();
-    const emailInput = useRef();
-    const passwordInput = useRef();
-    const passwordConfirmationInput = useRef();
-    
-    const handleClickShowPassword = () => setShowPassword((show) => !show);
-    const handleClickShowPasswordConfirmation = () => setShowPasswordConfirmation((show) => !show);
+    const handleTablePageChange = (newPage) => {
+        setTablePage(newPage)
+        setTable(newPage+1)
+    }
 
-    const handleMouseDownPassword = (event) => {
-        event.preventDefault();
+    const handleTablePageSizeChange = (newPageSize) => {
+        setTablePageSize(newPageSize)
+        setTable(tablePage, newPageSize)
+    }
+
+    const onChangeSearch = (e) => {
+        setSearchValue(e.target.value)        
+        setTable(tablePage, tablePageSize, e.target.value)
+    }
+
+    function setTable(page = 0, pageSize = 10, search = '') {
+        setIsTableLoading(true)
+        fetch(dataUrl + `?page=${page}&page_size=${pageSize}&search=${search}`)
+            .then((data) => data.json())
+            .then((data) => {
+                setTableData(data.data)
+                setTablePage(data.current_page - 1)
+                setTableTotal(data.total)
+                setIsTableLoading(false)
+            })
+    }
+
+    const openDialogDelete = (user) => {
+        console.log(user);
+    }
+
+    const openModal = (userEdited) => {
+        setUser(userEdited)
+        setIsModalOpen(true)
+    }
+
+    const handleModalOpen = () => {
+        setUser({
+            name: '',
+            email: '',
+            password: '',
+            password_confirmation: '',
+        })
+        setIsModalOpen(true)
     };
 
-    const handleMouseDownPasswordConfirmation = (event) => {
-        event.preventDefault();
-    };
+    const handleModalClose = () => setIsModalOpen(false);
 
-    const handleModalOpen = () => setModalOpen(true);
-    const handleModalClose = () => setModalOpen(false);
+    const handleResponseFn = () => {
+        setTable(tablePage+1)
+    }
 
     const columns = [
         { field: 'id', headerName: 'ID', width: 10 },
@@ -106,92 +140,28 @@ export default function Index({ auth, users, dataUrl }) {
             filterable: false,
             disableClickEventBubbling: true,
             renderCell: (params) => {
-                const onClick = (e) => {
+                const onClickEdit = (e) => {
                     const currentRow = params.row;
-                    return alert(JSON.stringify(currentRow, null, 4));
+                    openModal(currentRow)
+                };
+                const onClickDelete = (e) => {
+                    const currentRow = params.row;
+                    openDialogDelete(currentRow)
                 };
                 
                 return (
                     <Stack direction="row" spacing={2}>
-                    <Button variant="outlined" color="warning" size="small" onClick={onClick}>Edit</Button>
-                    <Button variant="outlined" color="error" size="small" onClick={onClick}>Delete</Button>
+                    <Button variant="outlined" color="warning" size="small" onClick={onClickEdit}>Edit</Button>
+                    <Button variant="outlined" color="error" size="small" onClick={onClickDelete}>Delete</Button>
                     </Stack>
                 );
             }
         },
     ];
 
-    // const rows = users.data;
-
-    const [tableData, setTableData] = useState([])
-    const [tablePage, setTablePage] = useState(0)
-    const [tablePageSize, setTablePageSize] = useState(10)
-    const [tableTotal, setTableTotal] = useState(0)
-    const [isTableLoading, setIsTableLoading] = useState(false)
-    const [searchValue, setSearchValue] = useState('')
-    const [isAbleSearch, setIsAbleSearch] = useState(true)
-
-    const handleTablePageChange = (newPage) => {
-        setTablePage(newPage)
-        setTable(newPage+1)
-    }
-
-    const handleTablePageSizeChange = (newPageSize) => {
-        setTablePageSize(newPageSize)
-        setTable(tablePage, newPageSize)
-    }
-
-    // const handleSearchFn = debounce((value) => {
-    //     setIsAbleSearch(true)
-    // }, 300)
-
-    const onChangeSearch = (e) => {
-
-        setSearchValue(e.target.value)        
-        setTable(tablePage, tablePageSize, e.target.value)
-    }
-
-    function setTable(page = 0, pageSize = 10, search = '') {
-        setIsTableLoading(true)
-        fetch(dataUrl + `?page=${page}&page_size=${pageSize}&search=${search}`)
-            .then((data) => data.json())
-            .then((data) => {
-                setTableData(data.data)
-                setTablePage(data.current_page - 1)
-                setTableTotal(data.total)
-                setIsTableLoading(false)
-            })
-    }
-
     useEffect(() => {
         setTable()
     }, [])
-
-    const createUser = (e) => {
-        e.preventDefault();
-
-        post(route('admin.users.store'), {
-            preserveScroll: true,
-            onSuccess: () => reset(),
-            onError: () => {
-                if (errors.name) {
-                    nameInput.current.focus();
-                }
-                if (errors.email) {
-                    emailInput.current.focus();
-                }
-                if (errors.password) {
-                    reset('password', 'password_confirmation');
-                    passwordInput.current.focus();
-                }
-
-                if (errors.password_confirmation) {
-                    reset('current_password');
-                    passwordConfirmationInput.current.focus();
-                }
-            },
-        });
-    };
     
     return (
         <AuthenticatedLayout
@@ -211,7 +181,7 @@ export default function Index({ auth, users, dataUrl }) {
                                     </Grid>
                                     <Grid item xs={6} md={4} className={'text-end'}>
                                         <Button variant="outlined" size='large' className="ml-4 flex" type="button" onClick={handleModalOpen}>
-                                            <FaPlus className='mr-2'/> Tambah Data
+                                            <AddIc className='mr-2'/> Tambah Data
                                         </Button>
                                     </Grid>
                                 </Grid>
@@ -239,138 +209,13 @@ export default function Index({ auth, users, dataUrl }) {
                     </div>
                 </Box>
 
-                <Modal
-                    open={modalOpen}
-                    onClose={handleModalClose}
-                    aria-labelledby="modal-modal-title"
-                    aria-describedby="modal-modal-description"
+                <UserModal 
+                    user={user}
+                    isModalOpen={isModalOpen}
+                    handleModalCloseFn={handleModalClose}
+                    handleResponseFn={handleResponseFn}
                     >
-                    <Box sx={{
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                        width: 600,
-                        bgcolor: 'background.paper',
-                        borderRadius: 5,
-                        boxShadow: 24,
-                        p: 4,
-                        }}>
-                        <Box sx={{ borderBottom: 1, pb: 2 }}>
-                            <Typography id="modal-modal-title" variant="h6" component="h2">
-                                Tambah User
-                            </Typography>
-                        </Box>
-                        <Box sx={{ p:2, display: 'flex', flexWrap: 'wrap' }}>
-                            <form onSubmit={createUser} className="mt-3 space-y-6">
-                                <Transition
-                                    show={recentlySuccessful}
-                                    enterFrom="opacity-0"
-                                    leaveTo="opacity-0"
-                                    className="transition ease-in-out"
-                                >
-                                    <Alert severity="success" sx={{width: '100%'}}>
-                                        <AlertTitle>Success</AlertTitle>
-                                        Berhasil menyimpan data
-                                    </Alert>
-                                </Transition>
-                                
-                                <FormControl sx={{ my: 1, width: '100%' }} variant="outlined">
-                                    <InputLabel htmlFor="name">Name</InputLabel>
-                                    <OutlinedInput 
-                                        id='name'
-                                        value={data.name}
-                                        onChange={(e) => setData('name', e.target.value)}
-                                        type='text'
-                                        ref={nameInput}
-                                        placeholder='Masukkan nama user'
-                                        label="Name"
-                                        size='middle'
-                                        fullWidth 
-                                        />
-                                    <InputError message={errors.name} className="mt-2" />
-                                </FormControl>
-                                    
-                                <FormControl sx={{ my: 1, width: '100%' }} variant="outlined">
-                                    <InputLabel htmlFor="email">Email address</InputLabel>
-                                    <OutlinedInput 
-                                        id='email'
-                                        value={data.email}
-                                        onChange={(e) => setData('email', e.target.value)}
-                                        type='email'
-                                        ref={emailInput}
-                                        label='Email address'
-                                        placeholder='Masukkan email'
-                                        size='middle'
-                                        fullWidth 
-                                        />
-                                    <InputError message={errors.email} className="mt-2" />
-                                </FormControl>
-                                    
-                                <FormControl sx={{ my: 1, width: '100%' }} variant="outlined">
-                                    <InputLabel htmlFor="password">Password</InputLabel>
-                                    <OutlinedInput 
-                                        id='password'
-                                        value={data.password}
-                                        type={showPassword ? 'text' : 'password'}
-                                        onChange={(e) => setData('password', e.target.value)}
-                                        placeholder='Masukkan password'
-                                        size='middle'
-                                        label='password'
-                                        fullWidth 
-                                        ref={passwordInput}
-                                        endAdornment={
-                                            <InputAdornment position="end">
-                                                <IconButton
-                                                    aria-label="toggle password visibility"
-                                                    onClick={handleClickShowPassword}
-                                                    onMouseDown={handleMouseDownPassword}
-                                                    edge="end"
-                                                    >
-                                                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                                                </IconButton>
-                                            </InputAdornment>
-                                        }
-                                        />
-                                    <InputError message={errors.password} className="mt-2" />
-                                </FormControl>
-                                    
-                                <FormControl sx={{ my: 1, width: '100%' }} variant="outlined">
-                                    <InputLabel htmlFor="password_confirmation">Password Confirmation</InputLabel>
-                                    <OutlinedInput 
-                                        id='password_confirmation'
-                                        value={data.password_confirmation}
-                                        onChange={(e) => setData('password_confirmation', e.target.value)}
-                                        type={showPasswordConfirmation ? 'text' : 'password'}
-                                        placeholder='Masukkan password konfirmasi'
-                                        size='middle'
-                                        label='Password Confirmation'
-                                        fullWidth 
-                                        ref={passwordConfirmationInput}
-                                        endAdornment={
-                                            <InputAdornment position="end">
-                                                <IconButton
-                                                    aria-label="toggle password visibility"
-                                                    onClick={handleClickShowPasswordConfirmation}
-                                                    onMouseDown={handleMouseDownPasswordConfirmation}
-                                                    edge="end"
-                                                    >
-                                                    {showPasswordConfirmation ? <VisibilityOff /> : <Visibility />}
-                                                </IconButton>
-                                            </InputAdornment>
-                                        }
-                                        />
-                                    <InputError message={errors.password_confirmation} className="mt-2" />
-                                </FormControl>
-                                
-                                <Box width={'100%'} sx={{ mt:2, display: 'flex', flexDirection: 'row', justifyContent: 'right' }}>
-                                    <Button disabled={processing} variant="outlined" size='large' sx={{ ml: 1 }} type={'submit'}><AddIc></AddIc>Simpan</Button>
-                                    <Button onClick={handleModalClose} type='button' variant="outlined" size='large' color='inherit' sx={{ ml: 1 }}>Cancel</Button>
-                                </Box>
-                            </form>
-                        </Box>
-                    </Box>
-                </Modal>
+                </UserModal>
             </Container>
         </AuthenticatedLayout>
     );

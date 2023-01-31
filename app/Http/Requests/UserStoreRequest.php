@@ -28,10 +28,39 @@ class UserStoreRequest extends FormRequest
      */
     public function rules()
     {
-        return [
+        $rule = [
             'name' => ['string', 'max:255', 'required'],
-            'email' => ['email', 'max:255', Rule::unique(User::class)->ignore($this->user()->id)],
+            'email' => ['email', 'max:255', Rule::unique(User::class)->ignore($this->id), 'required'],
             'password' => ['required', Password::defaults(), 'confirmed'],
         ];
+
+        if ($this->isMethod('put')) {
+            $rule['password'] = ['nullable', Password::defaults(), 'confirmed'];
+        }
+
+        return $rule;
+    }
+
+    /**
+     * Handle a passed validation attempt.
+     *
+     * @return void
+     */
+    public function passedValidation()
+    {
+        if ($this->has('password')) {
+            $this->replace([
+                'password' => Hash::make($this->input('password'))
+            ]);
+        }
+    }
+    
+    public function validated($key = null, $default = null): array
+    {
+        if ($this->has('password')) {
+            return array_merge(parent::validated(), ['password' => $this->input('password')]);
+        }
+
+        return parent::validated();
     }
 }
