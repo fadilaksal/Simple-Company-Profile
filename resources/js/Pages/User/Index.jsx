@@ -50,14 +50,6 @@ export default function Index({ auth, dataUrl }) {
         setTable(tablePage, newPageSize)
     }
 
-    useEffect(() => {
-        const updateTable = setTimeout(() => {
-            setTable(tablePage, tablePageSize, searchValue)
-        }, 500)
-
-        return () => clearTimeout(updateTable)
-    }, [searchValue])
-
     function setTable(page = tablePage, pageSize = tablePageSize, search = '') {
         setIsTableLoading(true)
         fetch(dataUrl + `?page=${page}&page_size=${pageSize}&search=${search}`)
@@ -74,12 +66,12 @@ export default function Index({ auth, dataUrl }) {
         console.log(user);
     }
 
-    const openModal = (userEdited) => {
+    const openEditModal = (userEdited) => {
         setUser(userEdited)
         setIsModalOpen(true)
     }
 
-    const handleModalOpen = () => {
+    const openCreateModal = () => {
         setUser({
             name: '',
             email: '',
@@ -145,7 +137,7 @@ export default function Index({ auth, dataUrl }) {
             renderCell: (params) => {
                 const onClickEdit = (e) => {
                     const currentRow = params.row;
-                    openModal(currentRow)
+                    openEditModal(currentRow)
                 };
                 const onClickDelete = (e) => {
                     const currentRow = params.row;
@@ -161,6 +153,14 @@ export default function Index({ auth, dataUrl }) {
             }
         },
     ];
+
+    useEffect(() => {
+        const updateTable = setTimeout(() => {
+            setTable(tablePage, tablePageSize, searchValue)
+        }, 500)
+
+        return () => clearTimeout(updateTable)
+    }, [searchValue])
 
     useEffect(() => {
         setTable()
@@ -183,7 +183,7 @@ export default function Index({ auth, dataUrl }) {
                                         <SearchInput searchValue={searchValue} setSearchValue={setSearchValue}></SearchInput>
                                     </Grid>
                                     <Grid item xs={6} md={4} className={'text-end'}>
-                                        <Button variant="outlined" size='large' className="ml-4 flex" type="button" onClick={handleModalOpen}>
+                                        <Button variant="outlined" size='large' className="ml-4 flex" type="button" onClick={openCreateModal}>
                                             <AddIc className='mr-2'/> Tambah Data
                                         </Button>
                                     </Grid>
