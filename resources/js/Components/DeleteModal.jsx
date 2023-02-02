@@ -10,7 +10,7 @@ export function DeleteModal({ openDeleteModal = () => {}, closeDeleteModal = () 
     }
     return (
         <Box>
-            <Snackbar open={recentlySuccessful} autoHideDuration={6000} onClose={handleClose}>
+            <Snackbar open={recentlySuccessful} autoHideDuration={6000} onClose={handleClose} anchorOrigin={{vertical: 'top', horizontal: 'right'}}>
                 <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
                     Berhasil menghapus data
                 </Alert>

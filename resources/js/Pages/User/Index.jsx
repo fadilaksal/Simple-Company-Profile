@@ -186,20 +186,12 @@ export default function Index({ auth, dataUrl }) {
             <Head title="Users" />
 
             <Container sx={{ py: 2 }}>
-                <DeleteModal
-                    openDeleteModal={openDeleteModal}
-                    closeDeleteModal={closeDeleteModal}
-                    deleteFn={deleteUser}
-                    recentlySuccessful={recentlySuccessful}
-                    processing={processing}
-                    />
-                    
                 <Box className="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
                     <div className="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
                         <Box className='mb-4'>
                             <Grid container spacing={2}>
                                 <Grid item xs={6} md={8}>
-                                    <SearchInput searchValue={searchValue} setSearchValue={setSearchValue}></SearchInput>
+                                    <SearchInput searchValue={searchValue} setSearchValue={setSearchValue} />
                                 </Grid>
                                 <Grid item xs={6} md={4} className={'text-end'}>
                                     <Button variant="outlined" size='large' className="ml-4 flex" type="button" onClick={openCreateModal}>
@@ -234,6 +226,14 @@ export default function Index({ auth, dataUrl }) {
                     isModalOpen={isModalOpen}
                     handleModalCloseFn={handleModalClose}
                     handleResponseFn={handleResponseModal}
+                    />
+                
+                <DeleteModal
+                    openDeleteModal={openDeleteModal}
+                    closeDeleteModal={closeDeleteModal}
+                    deleteFn={deleteUser}
+                    recentlySuccessful={recentlySuccessful}
+                    processing={processing}
                     />
             </Container>
         </AuthenticatedLayout>
