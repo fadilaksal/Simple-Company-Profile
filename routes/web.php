@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\ProfileController;
+use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -42,6 +43,14 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
         Route::post('/users', 'store')->name('users.store');
         Route::put('/users/{id}', 'update')->name('users.update');
         Route::delete('/users/{id}', 'destroy')->name('users.destroy');
+    });
+
+    Route::controller(RoleController::class)->group(function () {
+        Route::get('/roles', 'index')->name('roles.index');
+        Route::get('/roles/data', 'data')->name('roles.data');
+        Route::post('/roles', 'store')->name('roles.store');
+        Route::put('/roles/{id}', 'update')->name('roles.update');
+        Route::delete('/roles/{id}', 'destroy')->name('roles.destroy');
     });
 });
 

@@ -84,6 +84,11 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    public function role()
+    {
+        return $this->belongsToMany(Role::class, 'role_users', 'user_id', 'role_id');
+    }
+
     public function scopeFilter($query, $filter)
     {
         $query->when($filter['search'], function ($query, $search) {
