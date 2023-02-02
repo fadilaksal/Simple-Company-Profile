@@ -11,21 +11,8 @@ import UserModal from './Partials/UserModal';
 import SecondaryButton from '@/Components/SecondaryButton';
 import DangerButton from '@/Components/DangerButton';
 import { Transition } from '@headlessui/react';
-    
-const SearchInput = ({searchValue, setSearchValue}) => {
-    return <OutlinedInput
-            onChange={(event) => setSearchValue(event.target.value)}
-            type={'text'}
-            placeholder={'Search'}
-            value={searchValue}
-            size='small'
-            startAdornment={
-                <InputAdornment position="start">
-                    <SearchIcon></SearchIcon>
-                </InputAdornment>
-            }
-            />
-}
+import SearchInput from '@/Components/SearchInput';
+import { DeleteModal } from '@/Components/DeleteModal';
 
 export default function Index({ auth, dataUrl }) {
     const [tableData, setTableData] = useState([])
@@ -34,14 +21,6 @@ export default function Index({ auth, dataUrl }) {
     const [tableTotal, setTableTotal] = useState(0)
     const [isTableLoading, setIsTableLoading] = useState(false)
     const [searchValue, setSearchValue] = useState('')
-    const [isModalOpen, setIsModalOpen] = useState(false);
-
-    const [user, setUser] = useState({
-        name: '',
-        email: '',
-        password: '',
-        password_confirmation: '',
-    });
 
     const handleTablePageChange = (newPage) => {
         setTablePage(newPage)
@@ -144,6 +123,14 @@ export default function Index({ auth, dataUrl }) {
         setTable()
     }, [])
 
+    const [user, setUser] = useState({
+        name: '',
+        email: '',
+        password: '',
+        password_confirmation: '',
+    });
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const openEditModal = (userEdited) => {
         setUser(userEdited)
@@ -162,16 +149,9 @@ export default function Index({ auth, dataUrl }) {
 
     const handleModalClose = () => setIsModalOpen(false);
 
-    const handleResponseFn = () => setTable(tablePage+1)
+    const handleResponseModal = () => setTable(tablePage+1)
 
-
-    const {
-        delete: destroy,
-        processing,
-        reset,
-        errors,
-        recentlySuccessful
-    } = useForm({});
+    const { delete: destroy, reset, recentlySuccessful,processing } = useForm({});
 
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
@@ -206,33 +186,29 @@ export default function Index({ auth, dataUrl }) {
             <Head title="Users" />
 
             <Container sx={{ py: 2 }}>
+                <DeleteModal
+                    openDeleteModal={openDeleteModal}
+                    closeDeleteModal={closeDeleteModal}
+                    deleteFn={deleteUser}
+                    recentlySuccessful={recentlySuccessful}
+                    processing={processing}
+                    />
+                    
                 <Box className="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
                     <div className="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                        <Transition
-                            show={recentlySuccessful}
-                            enterFrom="opacity-0"
-                            leaveTo="opacity-0"
-                            className="transition ease-in-out mb-4" >
-                                <Alert severity="success" sx={{width: '100%'}}>
-                                    <AlertTitle>Success</AlertTitle>
-                                    Berhasil menghapus data
-                                </Alert>
-                        </Transition>
-                        <header >
-                            <Box>
-                                <Grid container spacing={2}>
-                                    <Grid item xs={6} md={8}>
-                                        <SearchInput searchValue={searchValue} setSearchValue={setSearchValue}></SearchInput>
-                                    </Grid>
-                                    <Grid item xs={6} md={4} className={'text-end'}>
-                                        <Button variant="outlined" size='large' className="ml-4 flex" type="button" onClick={openCreateModal}>
-                                            <AddIc className='mr-2'/> Tambah Data
-                                        </Button>
-                                    </Grid>
+                        <Box className='mb-4'>
+                            <Grid container spacing={2}>
+                                <Grid item xs={6} md={8}>
+                                    <SearchInput searchValue={searchValue} setSearchValue={setSearchValue}></SearchInput>
                                 </Grid>
-                            </Box>
-                        </header>
-                        <section className='mt-2'>
+                                <Grid item xs={6} md={4} className={'text-end'}>
+                                    <Button variant="outlined" size='large' className="ml-4 flex" type="button" onClick={openCreateModal}>
+                                        <AddIc className='mr-2'/> Tambah Data
+                                    </Button>
+                                </Grid>
+                            </Grid>
+                        </Box>
+                        <section>
                             <div style={{ width: '100%' }}>
                                 <DataGrid
                                     rows={tableData}
@@ -257,47 +233,8 @@ export default function Index({ auth, dataUrl }) {
                     user={user}
                     isModalOpen={isModalOpen}
                     handleModalCloseFn={handleModalClose}
-                    handleResponseFn={handleResponseFn}
-                    >
-                </UserModal>
-
-                <Modal 
-                    open={openDeleteModal}
-                    onClose={closeDeleteModal}
-                    aria-labelledby="modal-modal-title"
-                    aria-describedby="modal-modal-description">
-                    <Box sx={{
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                        width: 600,
-                        bgcolor: 'background.paper',
-                        borderRadius: 5,
-                        boxShadow: 24,
-                        p: 1,
-                        }}>
-                        <Box sx={{ p:1, display: 'flex', flexWrap: 'wrap' }}>
-                            <form onSubmit={deleteUser} className="p-6">
-                                <h2 className="text-lg font-medium text-gray-900">
-                                    Are you sure you want to delete account?
-                                </h2>
-
-                                <p className="mt-1 text-sm text-gray-600">
-                                    Once user is deleted, all of its resources and data will be permanently deleted.
-                                </p>
-
-                                <div className="mt-6 flex justify-end">
-                                    <SecondaryButton onClick={closeDeleteModal}>Cancel</SecondaryButton>
-
-                                    <DangerButton className="ml-3" processing={processing}>
-                                        Delete Account
-                                    </DangerButton>
-                                </div>
-                            </form>
-                        </Box>
-                    </Box>
-                </Modal>
+                    handleResponseFn={handleResponseModal}
+                    />
             </Container>
         </AuthenticatedLayout>
     );
