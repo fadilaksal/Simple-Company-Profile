@@ -32,6 +32,7 @@ class UserStoreRequest extends FormRequest
             'name' => ['string', 'max:255', 'required'],
             'email' => ['email', 'max:255', Rule::unique(User::class)->ignore($this->id), 'required'],
             'password' => ['required', Password::defaults(), 'confirmed'],
+            'role' => ['required', 'exists:roles,id'],
         ];
 
         if ($this->isMethod('put')) {

@@ -10,6 +10,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Response;
 
+use App\Models\Role;
 use App\Models\User;
 use Hash;
 
@@ -17,7 +18,12 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
+        $roles = Role::all();
+        $role = \Auth::user()->role_user->role;
+
         return Inertia::render('User/Index', [
+            'roleAuth' => $role,
+            'roles' => $roles,
             'dataUrl' => route('admin.users.data')
         ]);
     }
@@ -31,6 +37,7 @@ class UserController extends Controller
         ];
 
         $users = User::select('id', 'name', 'email', 'email_verified_at', 'created_at', 'updated_at')
+            ->with('role_user.role:roles.id,name')
             ->filter($filter)
             ->paginate($pageSize);
 
@@ -39,14 +46,18 @@ class UserController extends Controller
 
     public function store(UserStoreRequest $request): RedirectResponse
     {
-        User::create($request->validated());
+        $user = User::create($request->safe()->except('role'));
+        $user->roles()->sync([$request->safe()->only('role')['role'] ?? null]);
+
 
         return Redirect::route('admin.users.index');
     }
 
     public function update(UserStoreRequest $request, $id)
     {
-        $user = User::findOrFail($id)->update($request->validated());
+        $user = User::findOrFail($id)->update($request->safe()->except('role'));
+        $user = User::findOrFail($id);
+        $user->roles()->sync([$request->safe()->only('role')['role'] ?? null]);
 
         return Redirect::route('admin.users.index');
     }

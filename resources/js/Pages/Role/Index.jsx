@@ -9,7 +9,7 @@ import RoleModal from './Partials/RoleModal';
 import SearchInput from '@/Components/SearchInput';
 import { DeleteModal } from '@/Components/DeleteModal';
 
-export default function Index({ auth, dataUrl }) {
+export default function Index({ auth, roleAuth, dataUrl }) {
     const [tableData, setTableData] = useState([])
     const [tablePage, setTablePage] = useState(0)
     const [tablePageSize, setTablePageSize] = useState(10)
@@ -136,6 +136,7 @@ export default function Index({ auth, dataUrl }) {
     return (
         <AuthenticatedLayout
             auth={auth}
+            roleAuth={roleAuth}
             header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Roles</h2>}
         >
             <Head title="Roles" />

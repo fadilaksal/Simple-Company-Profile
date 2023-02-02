@@ -84,9 +84,28 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function role()
+    public function roles()
     {
         return $this->belongsToMany(Role::class, 'role_users', 'user_id', 'role_id');
+    }
+
+    public function role_user()
+    {
+        return $this->hasOne(RoleUser::class, 'user_id');
+    }
+
+    public function isAdmin()
+    {   
+        if ($this->role_user->name == 'Admin') return true;
+
+        return false;
+    }
+
+    public function isUser()
+    {
+        if ($this->role_user->name == 'User') return true;
+
+        return false;
     }
 
     public function scopeFilter($query, $filter)

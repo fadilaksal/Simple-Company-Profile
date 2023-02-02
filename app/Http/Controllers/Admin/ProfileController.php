@@ -19,7 +19,10 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): Response
     {
+        $role = \Auth::user()->role_user->role;
+
         return Inertia::render('Profile/Edit', [
+            'roleAuth' => $role,
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => session('status'),
         ]);

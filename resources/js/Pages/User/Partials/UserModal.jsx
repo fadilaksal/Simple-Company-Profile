@@ -1,11 +1,45 @@
 import { useState, useRef, useEffect} from 'react';
 import { Visibility, VisibilityOff, Add as AddIc } from '@mui/icons-material';
-import { InputLabel, Button, Box, Modal, Typography, InputAdornment, IconButton, OutlinedInput, FormControl, Alert, AlertTitle } from '@mui/material';
+import { InputLabel, Button, Box, Modal, Typography, InputAdornment, IconButton, OutlinedInput, FormControl, Alert, AlertTitle, FormGroup, FormControlLabel, Checkbox, Select, MenuItem } from '@mui/material';
 import { useForm } from '@inertiajs/inertia-react';
 import { Transition } from '@headlessui/react';
 import InputError from '@/Components/InputError';
 
-export default function UserModal({ user, isModalOpen, handleModalCloseFn, handleResponseFn }) {
+const RolesCheckbox = function ({ user, roles }) {
+    const [role, setRole] = useState('')
+    const handleChange = (event, element) => {
+        setRole(event.target.value)
+        user.role = event.target.value
+        user.role_user = {
+            id: event.target.value,
+            name: element.props.children
+        }
+    }
+
+    useEffect(() => {
+        setRole(user.role ?? '')
+    }, [user])
+
+    return (
+        <FormControl fullWidth>
+            <InputLabel id="role-input-label">Role</InputLabel>
+            <Select
+                labelId="role-input-label"
+                id="role-input"
+                value={role}
+                name='role'
+                label="Pilih Role"
+                onChange={handleChange}
+            >
+                {roles.map(({name, id}) => {
+                    return(<MenuItem value={id} key={'item-'+id}>{name}</MenuItem>)
+                })}
+            </Select>
+        </FormControl>
+    )
+}
+
+export default function UserModal({ user, roles, isModalOpen, handleModalCloseFn, handleResponseFn }) {
     const [showPassword, setShowPassword] = useState(false);
     const [showPasswordConfirmation, setShowPasswordConfirmation] = useState(false);
 
@@ -22,6 +56,7 @@ export default function UserModal({ user, isModalOpen, handleModalCloseFn, handl
             email: user.email,
             password: user.password,
             password_confirmation: user.password_confirmation,
+            role: user.role,
         })
     }, [user])
 
@@ -50,6 +85,7 @@ export default function UserModal({ user, isModalOpen, handleModalCloseFn, handl
             onSuccess: () => {
                 user.name = data.name
                 user.email = data.email
+                user.role_user = data.role_user
             },
             onError: () => {
                 if (errors.name) {
@@ -225,6 +261,11 @@ export default function UserModal({ user, isModalOpen, handleModalCloseFn, handl
                                 }
                                 />
                             <InputError message={errors.password_confirmation} className="mt-2" />
+                        </FormControl>
+
+                        <FormControl sx={{ my: 1, width: '100%' }} variant="outlined">
+                            <RolesCheckbox user={data} roles={roles} />
+                            <InputError message={errors.roles} className="mt-2" />
                         </FormControl>
                         
                         <Box width={'100%'} sx={{ mt:2, display: 'flex', flexDirection: 'row', justifyContent: 'right' }}>

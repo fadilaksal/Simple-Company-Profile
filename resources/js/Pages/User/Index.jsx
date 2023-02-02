@@ -14,7 +14,7 @@ import { Transition } from '@headlessui/react';
 import SearchInput from '@/Components/SearchInput';
 import { DeleteModal } from '@/Components/DeleteModal';
 
-export default function Index({ auth, dataUrl }) {
+export default function Index({ auth, roleAuth, roles, dataUrl }) {
     const [tableData, setTableData] = useState([])
     const [tablePage, setTablePage] = useState(0)
     const [tablePageSize, setTablePageSize] = useState(10)
@@ -49,6 +49,19 @@ export default function Index({ auth, dataUrl }) {
         { field: 'name', headerName: 'Name', width: 250 },
         { field: 'email', headerName: 'Email', width: 200 },
         { 
+            field: 'role_user', 
+            headerName: 'Role', 
+            width: 130, 
+            type: 'string',
+            renderCell: (params) => { 
+                if (params.value != null) {
+                    return params.value.role.name
+                } else {
+                    return '-'
+                }
+             }
+        },
+        { 
             field: 'email_verified_at', 
             headerName: 'Verified At', 
             width: 130, 
@@ -73,18 +86,6 @@ export default function Index({ auth, dataUrl }) {
              }
         },
         { 
-            field: 'updated_at', 
-            headerName: 'Updated At', 
-            width: 130, 
-            type: 'dateTime',
-            renderCell: (params) => { 
-                const date = moment(params.value).format('YYYY-MM-DD HH:mm')
-                return (
-                    date
-                )
-             }
-        },
-        { 
             field: 'action', 
             headerName: '', 
             width: 180,
@@ -94,6 +95,10 @@ export default function Index({ auth, dataUrl }) {
             renderCell: (params) => {
                 const onClickEdit = (e) => {
                     const currentRow = params.row;
+                    if (currentRow.role_user != null) {
+                        currentRow.role = currentRow.role_user.id ?? null
+                    }
+                    console.log(currentRow);
                     openEditModal(currentRow)
                 };
                 const onClickDelete = (e) => {
@@ -128,6 +133,7 @@ export default function Index({ auth, dataUrl }) {
         email: '',
         password: '',
         password_confirmation: '',
+        role: '',
     });
 
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -181,6 +187,7 @@ export default function Index({ auth, dataUrl }) {
     return (
         <AuthenticatedLayout
             auth={auth}
+            roleAuth={roleAuth}
             header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Users</h2>}
         >
             <Head title="Users" />
@@ -226,6 +233,7 @@ export default function Index({ auth, dataUrl }) {
                     isModalOpen={isModalOpen}
                     handleModalCloseFn={handleModalClose}
                     handleResponseFn={handleResponseModal}
+                    roles={roles}
                     />
                 
                 <DeleteModal

@@ -17,7 +17,10 @@ class RoleController extends Controller
 {
     public function index(Request $request)
     {
+        $role = \Auth::user()->role_user->role;
+
         return Inertia::render('Role/Index', [
+            'roleAuth' => $role,
             'dataUrl' => route('admin.roles.data')
         ]);
     }
