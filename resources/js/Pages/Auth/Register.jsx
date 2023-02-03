@@ -48,14 +48,6 @@ export default function Register() {
 
         post(route('register'), {
             preserveScroll: true,
-            onSuccess: () => {
-                // user.name = data.name
-                // user.email = data.email
-                // user.role_user = data.role_user
-            },
-            onError: () => {
-                console.log(errors);
-            }
         });
     };
 
@@ -63,7 +55,7 @@ export default function Register() {
         <div className='min-h-screen'>
             <Grid theme={theme} container spacing={2} className={'h-auto relative overflow-hidden'}>
                 <Grid theme={theme} item md={7} xs={12}>
-                    <Box alignItems={'center'} className={'py-10 px-10 md:px-20 md:py-20 xl:px-28'} margin={'auto'}>
+                    <Box alignItems={'center'} className={'py-10 px-10 md:px-20 md:py-24 xl:px-28'} margin={'auto'}>
                         <div className='font-Gilroy-Light font-[800] text-[18pt] text-[#1D334F] md:text-[26pt] xl:text-[32pt]'>
                             Hai, <span className={'font-Gilroy-ExtraBold'}>Selamat Datang</span> 
                         </div>
@@ -73,7 +65,7 @@ export default function Register() {
                             Silahkan login untuk melanjutkan
                         </div>
                         
-                        <img src="./assets/images/img-register.png" alt="" className='w-[600px] mt-2 md:absolute md:top-[100px] md:-right-52 xl:w-[768px] xl:-right-20' />
+                        <img src="./assets/images/img-register.png" alt="" className='w-[600px] mt-2 md:absolute md:top-[120px] md:-right-52 xl:w-[768px] xl:-right-20 z-50' />
 
                         <button className='text-center 
                             w-full
@@ -167,7 +159,7 @@ export default function Register() {
                                     required
                                 />
 
-                                <InputError message={errors.email} className="mt-2" />
+                                <InputError message={errors.ktp} className="mt-2" />
                             </div>
 
                             <div className="mt-4">
@@ -189,7 +181,7 @@ export default function Register() {
                             </div>
 
                             <div className="mt-4">
-                                <InputLabelRegister forInput="email" value="No. Telepon" />
+                                <InputLabelRegister forInput="phone_number" value="No. Telepon" />
 
                                 <TextInputRegister
                                     id="phone_number"
@@ -203,7 +195,7 @@ export default function Register() {
                                     required
                                 />
 
-                                <InputError message={errors.email} className="mt-2" />
+                                <InputError message={errors.phone_number} className="mt-2" />
                             </div>
 
                             <div className="mt-4">
@@ -260,10 +252,17 @@ export default function Register() {
                         </form>
                     </Box>
                 </Grid>
-                <Grid theme={theme} item md={5} xs={0} className={'bg-title invisible md:visible'}>
-                    <Box paddingTop={20} paddingRight={18}>
-                        
-                    </Box>
+                <Grid theme={theme} item md={5} xs={0} className={'invisible md:visible relative z-0'} style={{background: 'linear-gradient(180deg, #0582CA 0%, #002060 100%)'}}>
+                    <img src="./assets/images/register-top-right.png" alt="" className='absolute top-0 right-0' />
+                    <div className='pt-[650px] px-20'>
+                        <h1 className='font-Gilroy-Light text-white text-4xl font-extrabold'>
+                            Pemeriksaan Aktual
+                        </h1>
+                        <p className='font-Proxima-Nova text-white font-[600] text-[18px] mt-10'>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Gravida malesuada venenatis
+                        </p>
+                    </div>
+                    <img src="./assets/images/register-bottom-right.png" alt="" className='absolute bottom-0 left-0' />
                 </Grid>
             </Grid>
             <Head title="Register" />
