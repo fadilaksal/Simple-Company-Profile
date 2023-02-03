@@ -1,3 +1,18 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+    font-family: "Gilroy-Light";
+    src: url('../../public/fonts/Gilroy/Gilroy-Light.otf')
+}
+
+@font-face {
+    font-family: "Gilroy-ExtraBold";
+    src: url('../../public/fonts/Gilroy/Gilroy-ExtraBold.otf')
+}
+
+@font-face {
+    font-family: "Proxima-Nova";
+    src: url('../../public/fonts/Proxima-Nova/Proxima-Nova.otf')
+}
