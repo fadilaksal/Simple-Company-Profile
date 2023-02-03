@@ -265,7 +265,7 @@ export default function UserModal({ user, roles, isModalOpen, handleModalCloseFn
 
                         <FormControl sx={{ my: 1, width: '100%' }} variant="outlined">
                             <RolesCheckbox user={data} roles={roles} />
-                            <InputError message={errors.roles} className="mt-2" />
+                            <InputError message={errors.role} className="mt-2" />
                         </FormControl>
                         
                         <Box width={'100%'} sx={{ mt:2, display: 'flex', flexDirection: 'row', justifyContent: 'right' }}>

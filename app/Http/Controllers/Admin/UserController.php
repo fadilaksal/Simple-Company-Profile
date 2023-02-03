@@ -46,7 +46,7 @@ class UserController extends Controller
 
     public function store(UserStoreRequest $request): RedirectResponse
     {
-        $user = User::create($request->safe()->except('role'));
+        $user = User::create($request->safe()->except(['role', 'profile_image']));
         $user->roles()->sync([$request->safe()->only('role')['role'] ?? null]);
 
 
@@ -55,7 +55,7 @@ class UserController extends Controller
 
     public function update(UserStoreRequest $request, $id)
     {
-        $user = User::findOrFail($id)->update($request->safe()->except('role'));
+        $user = User::findOrFail($id)->update($request->safe()->except(['role', 'profile_image']));
         $user = User::findOrFail($id);
         $user->roles()->sync([$request->safe()->only('role')['role'] ?? null]);
 

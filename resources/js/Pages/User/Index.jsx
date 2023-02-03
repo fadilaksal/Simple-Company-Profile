@@ -67,9 +67,11 @@ export default function Index({ auth, roleAuth, roles, dataUrl }) {
             width: 130, 
             type: 'dateTime',
             renderCell: (params) => { 
-                const date = moment(params.value).format('YYYY-MM-DD HH:mm')
+                if (params.value != null) {
+                    return <span className='bg-green-800 text-white text-xs py-1 px-2 rounded-xl'>{moment(params.value).format('YYYY-MM-DD HH:mm')}</span>
+                }
                 return (
-                    date
+                    <span className='bg-gray-400 text-white text-xs py-1 px-2 rounded-xl'>Not Verified</span>
                 )
              }
         },
