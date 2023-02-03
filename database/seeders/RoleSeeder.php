@@ -15,10 +15,12 @@ class RoleSeeder extends Seeder
     public function run()
     {
         \App\Models\Role::create([
+            'id' => 1,
             'name' => 'Admin',
             'description' => 'Admin Role'
         ]);
         \App\Models\Role::create([
+            'id' => 2,
             'name' => 'User',
             'description' => 'User Role'
         ]);
