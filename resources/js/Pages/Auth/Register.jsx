@@ -96,13 +96,13 @@ export default function Register() {
                                     </defs>
                                 </SvgIcon>
                                 
-                                Sign In With Google
+                                Sign Up With Google
                             </span>
                         </button>
 
                         <div className="relative flex py-5 items-center font-Proxima-Nova text-[16px] font-[400] text-light-gray mt-6">
                             <div className="flex-grow border-t border-gray-400"></div>
-                            <span className="flex-shrink mx-4 text-gray-400">or sign in with email</span>
+                            <span className="flex-shrink mx-4 text-gray-400">or sign up with email</span>
                             <div className="flex-grow border-t border-gray-400"></div>
                         </div>
                         
