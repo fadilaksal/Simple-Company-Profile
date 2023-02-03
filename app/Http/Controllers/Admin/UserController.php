@@ -68,4 +68,15 @@ class UserController extends Controller
 
         return Redirect::route('admin.users.index');
     }
+
+    public function verify(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        $user->email_verified_at = $request->date ?? date('Y-m-d H:i:s');
+
+        $user->save();
+
+        return Redirect::route('admin.users.index');
+    }
 }

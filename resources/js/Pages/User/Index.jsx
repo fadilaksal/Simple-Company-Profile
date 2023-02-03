@@ -4,7 +4,7 @@ import { Head, useForm } from '@inertiajs/inertia-react';
 import { FaPlus } from "react-icons/fa";
 import { Visibility, VisibilityOff, Add as AddIc, Search as SearchIcon } from '@mui/icons-material';
 import { DataGrid } from '@mui/x-data-grid';
-import { Container, InputLabel, Button, Box, Modal, Typography, InputAdornment, IconButton, OutlinedInput, FormControl, Alert, AlertTitle, Grid } from '@mui/material';
+import { Container, InputLabel, Button, Box, Modal, Typography, InputAdornment, IconButton, OutlinedInput, FormControl, Alert, AlertTitle, Grid, Snackbar } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import moment from 'moment';
 import UserModal from './Partials/UserModal';
@@ -88,7 +88,7 @@ export default function Index({ auth, roleAuth, roles, dataUrl }) {
         { 
             field: 'action', 
             headerName: '', 
-            width: 180,
+            width: 280,
             sortable: false,
             filterable: false,
             disableClickEventBubbling: true,
@@ -98,9 +98,16 @@ export default function Index({ auth, roleAuth, roles, dataUrl }) {
                     if (currentRow.role_user != null) {
                         currentRow.role = currentRow.role_user.id ?? null
                     }
-                    console.log(currentRow);
+                    
                     openEditModal(currentRow)
                 };
+
+                const onClickVerif = (e) => {
+                    const currentRow = params.row;
+
+                    openVerifModal(currentRow)
+                };
+
                 const onClickDelete = (e) => {
                     const currentRow = params.row;
                     openDialogDelete(currentRow)
@@ -108,6 +115,7 @@ export default function Index({ auth, roleAuth, roles, dataUrl }) {
                 
                 return (
                     <Stack direction="row" spacing={2}>
+                    {params.row.email_verified_at == null && <Button variant="outlined" color="success" size="small" onClick={onClickVerif}>Verifikasi</Button>}
                     <Button variant="outlined" color="warning" size="small" onClick={onClickEdit}>Edit</Button>
                     <Button variant="outlined" color="error" size="small" onClick={onClickDelete}>Delete</Button>
                     </Stack>
@@ -157,7 +165,7 @@ export default function Index({ auth, roleAuth, roles, dataUrl }) {
 
     const handleResponseModal = () => setTable(tablePage+1)
 
-    const { delete: destroy, reset, recentlySuccessful,processing } = useForm({});
+    const { delete: destroy, put, reset, recentlySuccessful, processing } = useForm({});
 
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
@@ -178,6 +186,30 @@ export default function Index({ auth, roleAuth, roles, dataUrl }) {
             preserveScroll: true,
             onSuccess: () => { 
                 closeDeleteModal()
+                setTable(tablePage+1)
+            },
+            onFinish: () => reset(),
+        });
+    };
+
+    const [isVerifOpen, setIsVerifOpen] = useState(false);
+
+    const openVerifModal = (userVerified) => {
+        setIsVerifOpen(true)
+        setUser(userVerified)
+    }
+
+    const closeVerifModal = () => {
+        setIsVerifOpen(false);
+    };
+    
+    const verifUser = (e) => {
+        e.preventDefault();
+
+        put(route('admin.users.verify', { id: user.id, date: new Date() }), {
+            preserveScroll: true,
+            onSuccess: () => { 
+                setIsVerifOpen(false)
                 setTable(tablePage+1)
             },
             onFinish: () => reset(),
@@ -243,6 +275,43 @@ export default function Index({ auth, roleAuth, roles, dataUrl }) {
                     recentlySuccessful={recentlySuccessful}
                     processing={processing}
                     />
+
+                <Box>
+                    
+                <Modal 
+                    open={isVerifOpen}
+                    onClose={closeVerifModal}
+                    aria-labelledby="modal-modal-title"
+                    aria-describedby="modal-modal-description">
+                    <Box sx={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        width: 600,
+                        bgcolor: 'background.paper',
+                        borderRadius: 5,
+                        boxShadow: 24,
+                        p: 1,
+                        }}>
+                        <Box sx={{ p:1, display: 'flex', flexWrap: 'wrap' }}>
+                            <form onSubmit={verifUser} className="p-6">
+                                <h2 className="text-lg font-medium text-gray-900">
+                                    Are you sure you want to confirm this account?
+                                </h2>
+
+                                <div className="mt-6 flex justify-end">
+                                    <SecondaryButton onClick={closeVerifModal} className={'mr-2'}>Cancel</SecondaryButton>
+
+                                    <Button color='success' className="ml-3" processing={processing} variant="outlined" type={'submit'}>
+                                        Verify Account
+                                    </Button>
+                                </div>
+                            </form>
+                        </Box>
+                    </Box>
+                </Modal>
+            </Box>
             </Container>
         </AuthenticatedLayout>
     );
