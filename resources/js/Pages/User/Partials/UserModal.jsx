@@ -43,7 +43,7 @@ export default function UserModal({ user, roles, isModalOpen, handleModalCloseFn
     const [showPassword, setShowPassword] = useState(false);
     const [showPasswordConfirmation, setShowPasswordConfirmation] = useState(false);
 
-    const { data, setData, post, put, errors, reset, processing, recentlySuccessful } = useForm({
+    const { data, setData, post, put, errors, reset, processing, progress, recentlySuccessful } = useForm({
         name: '',
         email: '',
         password: '',
@@ -57,11 +57,13 @@ export default function UserModal({ user, roles, isModalOpen, handleModalCloseFn
             password: user.password,
             password_confirmation: user.password_confirmation,
             role: user.role,
+            avatar: user.avatar ?? null
         })
     }, [user])
 
     const nameInput = useRef();
     const emailInput = useRef();
+    const avatarInput = useRef();
     const passwordInput = useRef();
     const passwordConfirmationInput = useRef();
     
@@ -80,7 +82,7 @@ export default function UserModal({ user, roles, isModalOpen, handleModalCloseFn
     const updateUser = (e) => {
         e.preventDefault();
         
-        put(route('admin.users.update', { id: user.id }), {
+        post(route('admin.users.update', { id: user.id, _method: 'put' }), {
             preserveScroll: true,
             onSuccess: () => {
                 user.name = data.name
@@ -93,6 +95,9 @@ export default function UserModal({ user, roles, isModalOpen, handleModalCloseFn
                 }
                 if (errors.email) {
                     emailInput.current.focus();
+                }
+                if (errors.avatar) {
+                    avatarInput.current.focus();
                 }
                 if (errors.password) {
                     reset('password', 'password_confirmation');
@@ -122,6 +127,9 @@ export default function UserModal({ user, roles, isModalOpen, handleModalCloseFn
                 }
                 if (errors.email) {
                     emailInput.current.focus();
+                }
+                if (errors.avatar) {
+                    avatarInput.current.focus();
                 }
                 if (errors.password) {
                     reset('password', 'password_confirmation');
@@ -267,6 +275,27 @@ export default function UserModal({ user, roles, isModalOpen, handleModalCloseFn
                             <RolesCheckbox user={data} roles={roles} />
                             <InputError message={errors.role} className="mt-2" />
                         </FormControl>
+                        
+                        <InputLabel htmlFor="avatar">Avatar</InputLabel>
+                        <FormControl sx={{ my: 1, width: '100%' }} variant="outlined">
+                            <OutlinedInput 
+                                id='avatar'
+                                name='avatar'
+                                onChange={(e) => setData('avatar', e.target.files[0])}
+                                type='file'
+                                ref={avatarInput}
+                                placeholder='Masukkan Profil Picture'
+                                label="Avatar"
+                                size='middle'
+                                fullWidth 
+                                />
+                            <InputError message={errors.avatar} className="mt-2" />
+                        </FormControl>
+                        {progress && (
+                            <progress value={progress.percentage} max="100">
+                                {progress.percentage}%
+                            </progress>
+                        )}
                         
                         <Box width={'100%'} sx={{ mt:2, display: 'flex', flexDirection: 'row', justifyContent: 'right' }}>
                             <Button disabled={processing} variant="outlined" size='large' sx={{ ml: 1 }} type={'submit'}><AddIc></AddIc>Simpan</Button>

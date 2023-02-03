@@ -33,10 +33,12 @@ class UserStoreRequest extends FormRequest
             'email' => ['email', 'max:255', Rule::unique(User::class)->ignore($this->id), 'required'],
             'password' => ['required', Password::defaults(), 'confirmed'],
             'role' => ['required', 'exists:roles,id'],
+            'avatar' => ['required', 'mimes:jpg,jpeg,png', 'max:5000'],
         ];
 
         if ($this->isMethod('put')) {
             $rule['password'] = ['nullable', Password::defaults(), 'confirmed'];
+            $rule['avatar'] = ['nullable', 'mimes:jpg,jpeg,png', 'max:5000'];
         }
 
         return $rule;

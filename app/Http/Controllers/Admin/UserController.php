@@ -13,6 +13,7 @@ use Inertia\Response;
 use App\Models\Role;
 use App\Models\User;
 use Hash;
+use Storage;
 
 class UserController extends Controller
 {
@@ -46,18 +47,44 @@ class UserController extends Controller
 
     public function store(UserStoreRequest $request): RedirectResponse
     {
-        $user = User::create($request->safe()->except(['role', 'profile_image']));
+        $user = User::create($request->safe()->except(['role', 'avatar']));
         $user->roles()->sync([$request->safe()->only('role')['role'] ?? null]);
 
+        if ($request->hasFile('avatar')) {
+            $avatar = $user->id . auth()->user()->id . time() . '.' . $request->avatar->getClientOriginalExtension();
+            $request->file('avatar')->storeAs('avatar', $avatar);
+
+            $user->avatar = $avatar;
+            $user->save();
+        }
 
         return Redirect::route('admin.users.index');
     }
 
     public function update(UserStoreRequest $request, $id)
     {
-        $user = User::findOrFail($id)->update($request->safe()->except(['role', 'profile_image']));
+        $input = $request->safe()->except(['role', 'avatar']);
         $user = User::findOrFail($id);
+        $user->name = $input['name'];
+        $user->email = $input['email'];
+        
+        if ($input['password'] != null) {
+            $user->password = Hash::make($input('password'));
+        }
+
+        $user->save();
+        
         $user->roles()->sync([$request->safe()->only('role')['role'] ?? null]);
+
+        if ($request->hasFile('avatar')) {
+            $avatar = $user->id . auth()->user()->id . time() . '.' . $request->avatar->getClientOriginalExtension();
+            $request->file('avatar')->storeAs('avatar', $avatar);
+
+            $user->avatar = $avatar;
+            $user->save();
+
+            Storage::delete("avatar/$user->avatar");
+        }
 
         return Redirect::route('admin.users.index');
     }
