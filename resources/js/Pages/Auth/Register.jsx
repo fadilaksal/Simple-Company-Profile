@@ -252,7 +252,7 @@ export default function Register() {
                         </form>
                     </Box>
                 </Grid>
-                <Grid theme={theme} item md={5} xs={0} className={'invisible md:visible relative z-0'} style={{background: 'linear-gradient(180deg, #0582CA 0%, #002060 100%)'}}>
+                <Grid theme={theme} item md={5} xs={0} className={'hidden md:block relative z-0'} style={{background: 'linear-gradient(180deg, #0582CA 0%, #002060 100%)'}}>
                     <img src="./assets/images/register-top-right.png" alt="" className='absolute top-0 right-0' />
                     <div className='pt-[650px] px-20'>
                         <h1 className='font-Gilroy-Light text-white text-4xl font-extrabold'>
