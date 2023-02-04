@@ -26,4 +26,9 @@ class HomeController extends Controller
     {
         return Inertia::render('Checkout');
     }
+
+    public function lacakPemeriksaan()
+    {
+        return Inertia::render('LacakPemeriksaan');
+    }
 }

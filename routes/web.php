@@ -21,8 +21,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [HomeController::class, 'index'])->name('home'); 
 
 Route::get('/product/checkout', [HomeController::class, 'productCheckout'])->name('product.checkout'); 
+Route::get('/product/{id}', [HomeController::class, 'productDetail'])->name('product.detail');
 
-Route::get('/product/{id}', [HomeController::class, 'productDetail'])->name('product.detail'); 
+Route::get('/lacak-pemeriksaan', [HomeController::class, 'lacakPemeriksaan'])->name('lacak-pemeriksaan'); 
 
 Route::get('/admin/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 

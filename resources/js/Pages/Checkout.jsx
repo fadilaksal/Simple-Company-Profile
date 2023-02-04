@@ -29,7 +29,7 @@ export default function Checkout(props) {
 
     return (
         <>
-            <Head title="Detail Product" />
+            <Head title="Checkout" />
             <div className="relative min-h-screen text-title bg-[#F5F8FA] dark:bg-gray-900 sm:items-center sm:pt-0 font-Gilroy-Light">
                 <Navbar props={props} themeGrid={theme}/>
                 
