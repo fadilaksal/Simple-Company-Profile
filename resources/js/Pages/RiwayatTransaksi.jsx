@@ -84,7 +84,7 @@ export default function RiwayatTransaksi(props) {
 
                                             <div className="flex flex-col md:flex-row text-gray">
                                                 <div className='mr-2 mt-2 w-fit text-[14px]  font-extrabold'>No. 109A9S92102</div>
-                                                <div className='mr-2 mt-2 w-fit px-1 text-[12px] bg-green-300 text-green-600 rounded-xl w-fit'>menunggu barang ready</div>
+                                                <div className='mr-2 mt-2 w-fit px-1 text-[12px] bg-green-300 text-green-600 rounded-xl'>menunggu barang ready</div>
                                                 <div className='mr-2 mt-2 w-fit px-1 text-[12px] '>12 Maret 2021 11:02</div>
                                             </div>
 
