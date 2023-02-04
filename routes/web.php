@@ -25,6 +25,8 @@ Route::get('/product/{id}', [HomeController::class, 'productDetail'])->name('pro
 
 Route::get('/lacak-pemeriksaan', [HomeController::class, 'lacakPemeriksaan'])->name('lacak-pemeriksaan'); 
 
+Route::get('/riwayat-transaksi', [HomeController::class, 'riwayatTransaksi'])->name('riwayat-transaksi'); 
+
 Route::get('/admin/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {

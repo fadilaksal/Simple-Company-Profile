@@ -31,4 +31,9 @@ class HomeController extends Controller
     {
         return Inertia::render('LacakPemeriksaan');
     }
+
+    public function riwayatTransaksi()
+    {
+        return Inertia::render('RiwayatTransaksi');
+    }
 }
