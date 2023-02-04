@@ -22,8 +22,12 @@ export default function Navbar({props, themeGrid, className}) {
                     </Grid>
                     <Grid theme={themeGrid} item md={4} xs={12}>
                         <div className='flex flex-row justify-end items-center pr-10'>
-                            <FaShoppingCart className='text-xl mr-8'/>
-                            <FaBell className='text-xl mr-8'/>
+                            <Link href={route('product.checkout')} className={'block mr-8'} >
+                                <FaShoppingCart className='text-xl'/>
+                            </Link>
+                            <Link href='' className={'block mr-8'} >
+                                <FaBell className='text-xl'/>
+                            </Link>
                             {props.auth.user ? (
                                 <Link href={route('dashboard')} className='mr-4 py-2 px-6 font-Gilroy-ExtraBold rounded-xl hover:bg-[#EFF1FB]'>
                                     Dashboard

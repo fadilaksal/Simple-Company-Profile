@@ -21,4 +21,9 @@ class HomeController extends Controller
     {
         return Inertia::render('ProductDetail');
     }
+
+    public function productCheckout()
+    {
+        return Inertia::render('Checkout');
+    }
 }

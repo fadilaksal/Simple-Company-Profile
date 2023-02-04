@@ -18,7 +18,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', [HomeController::class, 'index']); 
+Route::get('/', [HomeController::class, 'index'])->name('home'); 
+
+Route::get('/product/checkout', [HomeController::class, 'productCheckout'])->name('product.checkout'); 
 
 Route::get('/product/{id}', [HomeController::class, 'productDetail'])->name('product.detail'); 
 
