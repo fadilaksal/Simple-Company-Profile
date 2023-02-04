@@ -31,7 +31,7 @@ export function Footer({props, themeGrid, className}) {
                     </p>
                 </Grid>
                 <Grid theme={themeGrid} item md={4} xs={12} className={' font-Proxima-Nova text-[16px] text-end'}>
-                    <img src="./assets/images/welcome-footer-googleplay.png" alt="" className='ml-auto' />
+                    <img src="/assets/images/welcome-footer-googleplay.png" alt="" className='ml-auto' />
                     <p className='text-[18px] mt-2 font-Proxima-Nova text-light-gray font-bold'>
                         <span className='mr-10'>FAQ</span> <span>Term and Conditions</span>
                     </p>

@@ -1,3 +1,4 @@
+import DividerNotif from '@/Components/Frontpage/DividerNotif';
 import { Footer } from '@/Components/Frontpage/Footer';
 import Navbar from '@/Components/Frontpage/Navbar';
 import MenuBurger from '@/Components/MenuBurger';
@@ -24,18 +25,20 @@ export default function Welcome(props) {
 
         for (let index = 0; index < 8; index++) {
             products.push(<Grid theme={theme} item lg={3} md={4} sm={6} xs={12} key={'product-' + index}>
+                            <Link href={route('product.detail', {id: '1'})}>
                                 <div className='bg-white rounded-xl p-6 relative font-Proxima-Nova'
                                     style={{boxShadow: '0px 16px 24px rgba(190, 190, 190, 0.16)'}}>
                                     <div className="absolute top-7 right-7">
                                         <FaStar className='inline text-orange-300'/> 5
                                     </div>
-                                    <img src="./assets/images/welcome-product.png" alt="image-product" className='m-auto w-[200px]' />
+                                    <img src="/assets/images/welcome-product.png" alt="image-product" className='m-auto w-[200px]' />
                                     <h3 className='md:text-[20pt] font-extrabold mt-5'>Suntik Steril</h3>
                                     <div className='flex flex-col md:flex-row mt-1 md:justify-between items-start md:items-center'>
                                         <span className='mt-2 text-orange-600 font-extrabold'>Rp. 10.000</span>
                                         <span className='mt-2 bg-green-200 text-[10pt] text-green-800 py-1 px-2 rounded-xl'>Ready Stok</span>
                                     </div>
                                 </div>
+                            </Link>
                         </Grid>)
         }
 
@@ -54,7 +57,7 @@ export default function Welcome(props) {
                         <Grid theme={theme} item lg={7} xs={12} className={'relative'}>
                             <div className='rounded-xl bg-white' style={{boxShadow: '0px 16px 24px rgba(190, 190, 190, 0.16)'}}>
                                 <div className='p-4 md:p-0'>
-                                    <img src="./assets/images/welcome-card-1.png" alt="" className='w-[250px] md:absolute md:top-5 md:right-0 z-30' />
+                                    <img src="/assets/images/welcome-card-1.png" alt="" className='w-[250px] md:absolute md:top-5 md:right-0 z-30' />
                                 </div>
                                 <div className='flex flex-row '>
                                     <div className='grow px-6 py-4 md:py-8 md:px-12'>
@@ -65,7 +68,7 @@ export default function Welcome(props) {
                                         </button>
                                     </div>
                                     <div className='flex-none w-52 relative z-0 overflow-hidden rounded-xl hidden md:flex'>
-                                        <img src="./assets/images/welcome-card-blur.png" alt="" className='h-[800px] hidden md:flex md:absolute  -top-5 right-0 z-20' />
+                                        <img src="/assets/images/welcome-card-blur.png" alt="" className='h-[800px] hidden md:flex md:absolute  -top-5 right-0 z-20' />
                                     </div>
                                 </div>
                             </div>
@@ -73,7 +76,7 @@ export default function Welcome(props) {
                         <Grid theme={theme} item lg={5} xs={12} className={'relative'}>
                             <div className='rounded-xl bg-white' style={{boxShadow: '0px 16px 24px rgba(190, 190, 190, 0.16)'}}>
                                 <div className='p-4 md:p-0'>
-                                    <img src="./assets/images/welcome-card-2.png" alt="" className='w-[160px] m-auto md:w-[240px] md:absolute top-5 right-5 z-50' />
+                                    <img src="/assets/images/welcome-card-2.png" alt="" className='w-[160px] m-auto md:w-[240px] md:absolute top-5 right-5 z-50' />
                                 </div>
                                 <div className='flex flex-row '>
                                     <div className='grow px-8 py-4 md:py-8 md:px-12'>
@@ -89,7 +92,7 @@ export default function Welcome(props) {
                     </Grid>
 
                     <div className='p-8 mt-8 bg-white rounded-xl relative' style={{boxShadow: '0px 16px 24px rgba(190, 190, 190, 0.16)'}}>
-                        <img src="./assets/images/welcome-search-icon.png" alt="" className='w-[160px] md:absolute left-10 -top-5'/>
+                        <img src="/assets/images/welcome-search-icon.png" alt="" className='w-[160px] md:absolute left-10 -top-5'/>
                         <div className='flex flex-col md:flex-row justify-between items-center '>
                             <div className="md:ml-[180px] items-center">
                                 <h2 className='font-Gilroy-ExtraBold text-[22px]'>
@@ -138,11 +141,11 @@ export default function Welcome(props) {
                         
                     <div className={'mt-6'}>
                         <ProductList />
+                        
                         <div className='text-center'>
-
-                        <button className='px-24 py-3 bg-title text-white font-Gilroy-ExtraBold rounded-xl mt-16 mx-auto'>
-                            Lihat Lainnya
-                        </button>
+                            <button className='px-24 py-3 bg-title text-white font-Gilroy-ExtraBold rounded-xl mt-16 mx-auto'>
+                                Lihat Lainnya
+                            </button>
                         </div>
                     </div>
 
@@ -162,7 +165,7 @@ export default function Welcome(props) {
                         <Grid container spacing={8} className={'mb-2 py-4'}>
                             <Grid theme={theme} item lg={6} md={12} xs={12} className={'relative font-Proxima-Nova text-[16px] font-bold'}>
                                 <div className='bg-white rounded-xl relative py-8 px-4'  style={{boxShadow: '0px 16px 24px rgba(190, 190, 190, 0.16)'}}>
-                                    <img src="./assets/images/welcome-layanan-1.png" alt="" className='w-[260px] m-auto md:w-[200px] md:absolute md:top-10 md:-right-6 lg:-right-8 z-50' />
+                                    <img src="/assets/images/welcome-layanan-1.png" alt="" className='w-[260px] m-auto md:w-[200px] md:absolute md:top-10 md:-right-6 lg:-right-8 z-50' />
 
                                     <div className='px-4 py-4 items-center'>
                                         <h2 className=''>PCR Swab Test (Drive Thru) - Hasil 1 Hari Kerja</h2>
@@ -174,7 +177,7 @@ export default function Welcome(props) {
                             </Grid>
                             <Grid theme={theme} item lg={6} md={12} xs={12} className={'relative font-Proxima-Nova text-[16px] font-bold'}>
                                 <div className='bg-white rounded-xl relative py-8 px-4'  style={{boxShadow: '0px 16px 24px rgba(190, 190, 190, 0.16)'}}>
-                                    <img src="./assets/images/welcome-layanan-2.png" alt="" className='w-[260px] m-auto md:w-[200px] md:absolute md:top-10 md:-right-6 lg:-right-8 z-50' />
+                                    <img src="/assets/images/welcome-layanan-2.png" alt="" className='w-[260px] m-auto md:w-[200px] md:absolute md:top-10 md:-right-6 lg:-right-8 z-50' />
 
                                     <div className='px-4 py-4 items-center'>
                                         <h2 className=''>PCR Swab Test (Drive Thru) - Hasil 1 Hari Kerja</h2>
@@ -188,10 +191,7 @@ export default function Welcome(props) {
                     </div>
                 </div>
                 
-                <div className="px-24 py-16 bg-title font-Gilroy-ExtraBold text-[30px] text-white relative">
-                    <h1>Ingin mendapat update dari kami ?</h1>
-                    <img src="./assets/images/welcome-ornament.png" className='absolute left-0 -top-5 h-[200px]'/>
-                </div>
+                <DividerNotif />
 
                 <Footer themeGrid={theme}/>
             </div>

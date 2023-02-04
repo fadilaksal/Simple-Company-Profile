@@ -25,7 +25,7 @@ module.exports = {
                 'light-gray': '#BEBEBE',
                 'light-white': '#EFF3F6',
                 'dark-blue': '#1D334F',
-                'aqua': '#00A3A0'
+                'aqua': '#00D9D5'
             },
             border: {
                 '01': '1px'
