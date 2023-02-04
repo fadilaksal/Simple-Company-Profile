@@ -2,6 +2,8 @@ import DividerNotif from '@/Components/Frontpage/DividerNotif';
 import { Footer } from '@/Components/Frontpage/Footer';
 import Navbar from '@/Components/Frontpage/Navbar';
 import ImageTile from '@/Components/Frontpage/Product/ImageTile';
+import ProductCard from '@/Components/Frontpage/Product/ProductCard';
+import { ProductListCard } from '@/Components/Frontpage/Product/ProductListCard';
 import InputLabelRegister from '@/Components/InputLabelRegister';
 import MenuBurger from '@/Components/MenuBurger';
 import PresentedLogo from '@/Components/PresentedLogo';
@@ -24,33 +26,6 @@ export default function ProductDetail(props) {
         },
     });
 
-
-
-    const ProductList = ({ productSize = 8 }) => {
-        const products = [];
-
-        for (let index = 0; index < productSize; index++) {
-            products.push(<Grid theme={theme} item lg={3} md={4} sm={6} xs={12} key={'product-' + index}>
-                            <Link href={route('product.detail', {id: '1'})}>
-                                <div className='bg-white rounded-xl p-6 relative font-Proxima-Nova'
-                                    style={{boxShadow: '0px 16px 24px rgba(190, 190, 190, 0.16)'}}>
-                                    <div className="absolute top-7 right-7">
-                                        <FaStar className='inline text-orange-300'/> 5
-                                    </div>
-                                    <img src="/assets/images/welcome-product.png" alt="image-product" className='m-auto w-[200px]' />
-                                    <h3 className='md:text-[20pt] font-extrabold mt-5'>Suntik Steril</h3>
-                                    <div className='flex flex-col md:flex-row mt-1 md:justify-between items-start md:items-center'>
-                                        <span className='mt-2 text-orange-600 font-extrabold'>Rp. 10.000</span>
-                                        <span className='mt-2 bg-green-200 text-[10pt] text-green-800 py-1 px-2 rounded-xl'>Ready Stok</span>
-                                    </div>
-                                </div>
-                            </Link>
-                        </Grid>)
-        }
-
-        return (<Grid container spacing={4}>{products}</Grid>)
-    }
-
     return (
         <>
             <Head title="Detail Product" />
@@ -72,7 +47,7 @@ export default function ProductDetail(props) {
 
                     <div className='mt-10'>
                         <Grid container spacing={10}>
-                            <Grid theme={theme} item md={8} sm={12}>
+                            <Grid theme={theme} item lg={8} sm={12}>
                                 <div className='px-10 md:px-16 py-14 rounded-xl bg-white'>
                                     <Grid container spacing={2}>
                                         <Grid theme={theme} item md={4} sm={12}>
@@ -115,7 +90,7 @@ export default function ProductDetail(props) {
                                 </div>
                             </Grid>
 
-                            <Grid theme={theme} item md={4} sm={12}>
+                            <Grid theme={theme} item lg={4} sm={12}>
                                 <div className='px-12 py-10 rounded-xl bg-white font-Proxima-Nova'>
                                     <h2 className='text-[16pt] font-bold text-title'>Atur Jumlah dan Catatan</h2>
                                     <div className='mt-4'>
@@ -192,7 +167,7 @@ export default function ProductDetail(props) {
                             <h1 className='font-Gilroy-ExtraBold font-bold text-[20pt] text-title'>Produk Lainnya</h1>
 
                             <div className='mt-8'>
-                                <ProductList productSize={4} />
+                                <ProductListCard productCount={4} />
                             </div>
                         </div>
                     </div>

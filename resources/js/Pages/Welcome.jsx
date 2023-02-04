@@ -1,6 +1,9 @@
+import CardLayanan from '@/Components/Frontpage/CardLayanan';
 import DividerNotif from '@/Components/Frontpage/DividerNotif';
 import { Footer } from '@/Components/Frontpage/Footer';
 import Navbar from '@/Components/Frontpage/Navbar';
+import ProductCard from '@/Components/Frontpage/Product/ProductCard';
+import { ProductListCard } from '@/Components/Frontpage/Product/ProductListCard';
 import MenuBurger from '@/Components/MenuBurger';
 import PresentedLogo from '@/Components/PresentedLogo';
 import { Link, Head } from '@inertiajs/inertia-react';
@@ -19,31 +22,6 @@ export default function Welcome(props) {
             },
         },
     });
-
-    const ProductList = () => {
-        const products = [];
-
-        for (let index = 0; index < 8; index++) {
-            products.push(<Grid theme={theme} item lg={3} md={4} sm={6} xs={12} key={'product-' + index}>
-                            <Link href={route('product.detail', {id: '1'})}>
-                                <div className='bg-white rounded-xl p-6 relative font-Proxima-Nova'
-                                    style={{boxShadow: '0px 16px 24px rgba(190, 190, 190, 0.16)'}}>
-                                    <div className="absolute top-7 right-7">
-                                        <FaStar className='inline text-orange-300'/> 5
-                                    </div>
-                                    <img src="/assets/images/welcome-product.png" alt="image-product" className='m-auto w-[200px]' />
-                                    <h3 className='md:text-[20pt] font-extrabold mt-5'>Suntik Steril</h3>
-                                    <div className='flex flex-col md:flex-row mt-1 md:justify-between items-start md:items-center'>
-                                        <span className='mt-2 text-orange-600 font-extrabold'>Rp. 10.000</span>
-                                        <span className='mt-2 bg-green-200 text-[10pt] text-green-800 py-1 px-2 rounded-xl'>Ready Stok</span>
-                                    </div>
-                                </div>
-                            </Link>
-                        </Grid>)
-        }
-
-        return (<Grid container spacing={4}>{products}</Grid>)
-    }
 
 
     return (
@@ -140,7 +118,7 @@ export default function Welcome(props) {
                     </div>
                         
                     <div className={'mt-6'}>
-                        <ProductList />
+                        <ProductListCard productCount={8} />
                         
                         <div className='text-center'>
                             <button className='px-24 py-3 bg-title text-white font-Gilroy-ExtraBold rounded-xl mt-16 mx-auto'>
@@ -149,43 +127,33 @@ export default function Welcome(props) {
                         </div>
                     </div>
 
-                    <div className='mt-20'>
-                        <h1 className='font-Gilroy-ExtraBold text-[30px]'>Pilih Tipe Layanan Kesehatan Anda</h1>
-                        <div className='mt-10 w-fit p-2 bg-white rounded-full font-bold'>
-                            <button className='py-1 px-2 bg-green-400 text-title text-[16px] font-Proxima-Nova rounded-full mr-2'>
-                                Satuan
-                            </button>
-                            <button className='py-1 px-2 bg-white text-title text-[16px] font-Proxima-Nova rounded-full'>
-                                Paket Pemeriksaan
-                            </button>
+                    <div className="mt-20">
+                        <div className=''>
+                            <h1 className='font-Gilroy-ExtraBold text-[30px]'>Pilih Tipe Layanan Kesehatan Anda</h1>
+                            <div className='mt-10 w-fit p-2 bg-white rounded-full font-bold'>
+                                <button className='py-1 px-2 bg-green-400 text-title text-[16px] font-Proxima-Nova rounded-full mr-2'>
+                                    Satuan
+                                </button>
+                                <button className='py-1 px-2 bg-white text-title text-[16px] font-Proxima-Nova rounded-full'>
+                                    Paket Pemeriksaan
+                                </button>
+                            </div>
                         </div>
-                    </div>
 
-                    <div className="mt-10">
                         <Grid container spacing={8} className={'mb-2 py-4'}>
                             <Grid theme={theme} item lg={6} md={12} xs={12} className={'relative font-Proxima-Nova text-[16px] font-bold'}>
-                                <div className='bg-white rounded-xl relative py-8 px-4'  style={{boxShadow: '0px 16px 24px rgba(190, 190, 190, 0.16)'}}>
-                                    <img src="/assets/images/welcome-layanan-1.png" alt="" className='w-[260px] m-auto md:w-[200px] md:absolute md:top-10 md:-right-6 lg:-right-8 z-50' />
-
-                                    <div className='px-4 py-4 items-center'>
-                                        <h2 className=''>PCR Swab Test (Drive Thru) - Hasil 1 Hari Kerja</h2>
-                                        <p className='mt-1 text-orange-500'>Rp. 1.400.000</p>
-                                        <p className='mt-3'><FaHospital className='inline mr-2' />Unicare Drive Thru Central Parkir Kuta </p>
-                                        <p className='mt-1 font-normal text-[14px] text-[#BEBEBE]'><FaMapPin className='inline mr-2 text-title' />Kuta, Kabupaten Badung</p>
-                                    </div>
-                                </div>
+                                <CardLayanan src='/assets/images/welcome-layanan-1.png' 
+                                    title='PCR Swab Test (Drive Thru) - Hasil 1 Hari Kerja' 
+                                    price='1.400.000'
+                                    hospital='Unicare Drive Thru Central Parkir Kuta'
+                                    location='Kuta, Kabupaten Badung'/>
                             </Grid>
-                            <Grid theme={theme} item lg={6} md={12} xs={12} className={'relative font-Proxima-Nova text-[16px] font-bold'}>
-                                <div className='bg-white rounded-xl relative py-8 px-4'  style={{boxShadow: '0px 16px 24px rgba(190, 190, 190, 0.16)'}}>
-                                    <img src="/assets/images/welcome-layanan-2.png" alt="" className='w-[260px] m-auto md:w-[200px] md:absolute md:top-10 md:-right-6 lg:-right-8 z-50' />
-
-                                    <div className='px-4 py-4 items-center'>
-                                        <h2 className=''>PCR Swab Test (Drive Thru) - Hasil 1 Hari Kerja</h2>
-                                        <p className='mt-1 text-orange-500'>Rp. 1.400.000</p>
-                                        <p className='mt-3'><FaHospital className='inline mr-2' />Unicare Drive Thru Central Parkir Kuta </p>
-                                        <p className='mt-1 font-normal text-[14px] text-[#BEBEBE]'><FaMapPin className='inline mr-2 text-title' />Kuta, Kabupaten Badung</p>
-                                    </div>
-                                </div>
+                            <Grid theme={theme} item lg={6} md={12} xs={12} className={''}>
+                                <CardLayanan src='/assets/images/welcome-layanan-2.png' 
+                                    title='PCR Swab Test (Drive Thru) - Hasil 1 Hari Kerja' 
+                                    price='1.400.000'
+                                    hospital='Unicare Drive Thru Central Parkir Kuta'
+                                    location='Kuta, Kabupaten Badung'/>
                             </Grid>
                         </Grid>
                     </div>
